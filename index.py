@@ -45,7 +45,7 @@ async def answer_query(request: QueryRequest):
     #GA1 : Q1 Check if the question starts with "run code"
     if question.startswith("what is the output of code "):
         command = question.replace("what is the output of code ", "").strip("?")
-        return {"answer": run_vscode_command(command)}
+        return ("VS Code commands cannot be executed in a cloud environment like Vercel. Please run the command locally on your machine.",{"answer": run_vscode_command(command)})
 
     return {"answer": "Question not recognized"}
 
