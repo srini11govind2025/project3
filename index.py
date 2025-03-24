@@ -43,8 +43,8 @@ async def answer_query(request: QueryRequest):
     question = request.question.lower().strip()
 
     #GA1 : Q1 Check if the question starts with "run code"
-    if question.startswith("run code "):
-        command = question.replace("run code ", "").strip()
+    if question.startswith("what is the output of code "):
+        command = question.replace("what is the output of code ", "").strip("?")
         return {"answer": run_vscode_command(command)}
 
     return {"answer": "Question not recognized"}
