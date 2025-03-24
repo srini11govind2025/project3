@@ -27,43 +27,30 @@ def home():
 class QueryRequest(BaseModel):
     question: str
 
-# Utility Functions
-def is_vscode_installed():
-    """Check if VS Code is installed."""
+#GA1 : Q1 Function to run VS Code commands and return output
+def run_vscode_command(command: str):
+    """Runs a VS Code command and returns the output."""
     try:
-        subprocess.run(["code", "-v"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-        return True
-    except:
-        return False
+        result = subprocess.run(["code"] + command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        return result.stdout.strip() if result.stdout else result.stderr.strip()
+    except Exception as e:
+        return str(e)
 
-def hash_string(value: str):
-    """Return SHA-256 hash of a string."""
-    return hashlib.sha256(value.encode()).hexdigest()
-
-def count_wednesdays(start_date, end_date):
-    """Count the number of Wednesdays in a date range."""
-    return sum(1 for d in range((end_date - start_date).days + 1)
-               if (start_date + datetime.timedelta(days=d)).weekday() == 2)
-
-# GitHub API Interaction Optimization
-def get_github_latest_commit(repo_url: str):
-    """Fetch the latest commit hash from GitHub API with minimal response size."""
-    try:
-        response = requests.get(f"{repo_url}/commits", params={"per_page": 1})
-        response.raise_for_status()
-        commits = response.json()
-        return commits[0]["sha"] if commits else "No commits found"
-    except requests.RequestException as e:
-        return f"Error fetching commits: {str(e)}"
 
 # API Endpoints
 @app.post("/answer")
 async def answer_query(request: QueryRequest):
     question = request.question.lower().strip()
 
+    #GA1 : Q1 Check if the question starts with "run code"
+    if question.startswith("run code "):
+        command = question.replace("run code ", "").strip()
+        return {"answer": run_vscode_command(command)}
+
+    return {"answer": "Question not recognized"}
+
     match question:
-        case "vscode installed":
-            return {"answer": "VS Code is installed" if is_vscode_installed() else "VS Code is not installed"}
+        
         case "prettier hash":
             return {"answer": hash_string("prettier@3.4.2 README.md")}
         case "excel sequence":
