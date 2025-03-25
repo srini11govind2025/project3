@@ -14,8 +14,8 @@ app = FastAPI()
 # AWS S3 Client Setup
 s3 = boto3.client('s3')
 
-class HTMLInput(BaseModel):
-    html: str  # Expecting raw HTML as input
+#class HTMLInput(BaseModel):
+    #html: str  # Expecting raw HTML as input
 """
 @app.post("/extract_hidden")
 async def extract_hidden_fields(data: HTMLInput):
@@ -136,9 +136,4 @@ def answer_question(request: QuestionRequest):
 
     return {"answer": "Question not recognized"}
 
-@app.get("/")
-def home():
-    """Simple API home route."""
-    return {"message": "Local API for Testing 50 Questions is running!"}
-    
 
