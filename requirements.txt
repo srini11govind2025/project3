@@ -1,6 +1,5 @@
 fastapi==0.75.0
 uvicorn==0.16.0
-python-multipart==0.0.5
-boto3==1.24.0  # Only if you use AWS S3
+
+
 requests==2.25.1
-beautifulsoup4

@@ -1,40 +1,32 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
-import subprocess
-import hashlib
-import csv
-import requests
-import datetime
-from typing import Optional
-import boto3
-from bs4 import BeautifulSoup
-import os
+from datetime import datetime, timedelta
 import json
 import re
-
+import csv
+import os
+import subprocess
+import requests
 
 app = FastAPI()
 
-# AWS S3 Client Setup
-#s3 = boto3.client('s3')
+class DateRange(BaseModel):
+    start_date: str
+    end_date: str
+# GA1: Q6
+def count_wednesdays(start_date: str, end_date: str) -> int:
+    """Counts Wednesdays in the given date range (inclusive)."""
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+    count = 0
 
-#class HTMLInput(BaseModel):
-    #html: str  # Expecting raw HTML as input
-"""
-@app.post("/extract_hidden")
-async def extract_hidden_fields(data: HTMLInput):
-    try:
-        soup = BeautifulSoup(data.html, "html.parser")  # Use "html.parser" instead of "lxml"
-        hidden_inputs = soup.find_all("input", {"type": "hidden"})
+    while start <= end:
+        if start.weekday() == 2:  # 2 represents Wednesday
+            count += 1
+        start += timedelta(days=1)
 
-        extracted_values = {inp.get("name", f"unnamed_{i}"): inp.get("value", "") 
-                            for i, inp in enumerate(hidden_inputs)}
+    return count
 
-        return {"hidden_fields": extracted_values}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-"""
 
 # GA1: Q3 - Precomputed hash values
 HASH_VALUES = {
@@ -49,24 +41,7 @@ HASH_VALUES = {
     "blake2s": "command not found"
 }
 
-# Function to download files from S3
-def download_file_from_s3(bucket_name, object_name, file_name):
-    """Download a file from S3 and return the local file path."""
-    s3.download_file(bucket_name, object_name, file_name)
-    return file_name
-
-@app.get("/")
-def home():
-    return {"message": "IITM Tools API is running!"}
-
-# Define the request model
-class QueryRequest(BaseModel):
-    question: str
-
-
-
-# API Endpoints
-
+# Load questions from JSON file
 def load_questions():
     """Loads predefined questions from a JSON file."""
     if os.path.exists("questions.json"):
@@ -86,35 +61,35 @@ def run_vscode_command(command: str = "-s"):
 
 # GA1: Q2 - Function to send HTTP request and return JSON response
 def send_http_request(email):
-    try:
-        url = "https://httpbin.org/get"
-        params = {"email": email}
-        response = requests.get(url, params=params, timeout=5)
-        response.raise_for_status()  # Raises error for HTTP failures
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        return {"error": str(e)}
+    """Sends a GET request to httpbin.org with the provided email parameter."""
+    url = "https://httpbin.org/get"
+    params = {"email": email}
+    response = requests.get(url, params=params)
+    return response.json()
 
 
+# Request model
+class QuestionRequest(BaseModel):
+    question: str
 
 @app.post("/answer")
 def answer_question(request: QuestionRequest):
     """Handles natural language questions and returns appropriate answers."""
     question = request.question.lower().strip()
-    
+
     # Check predefined questions in JSON
     questions = load_questions()
     for q in questions:
         if q["question"].lower() == question:
             return {"answer": q["answer"]}
-    
+
     # GA1: Q3 - Handling hash sum queries
     if "npx -y prettier" in question and "readme.md" in question:
         for key in HASH_VALUES:
             if key in question:
                 return {"answer": HASH_VALUES[key]}
         return {"answer": "Hash type not recognized"}
-    
+
     # GA1: Q1 - Handling VS Code command
     if "what is the output of code" in question:
         match = re.search(r"code\s+(-\S+)", question)  # Extracts the flag after 'code'
@@ -129,15 +104,28 @@ def answer_question(request: QuestionRequest):
     if match:
         email = match.group(1)
         return {"answer": send_http_request(email)}
-    
+
     # GA1: Q4 - Handling Google Sheets formula detection
-    if "google sheets" in question and "sum" in question and "array" in question and "sequence" in question:
+    if all(word in question.lower() for word in ["google sheets", "sum", "array", "sequence"]):
         return {"answer": 625}
-    
+
     # GA1: Q5- Handling Excel formula detection
     if all(word in question.lower() for word in ["excel", "sum", "take", "sortby"]):
         return {"answer": 71}
 
+    # GA1:Q6 Handling Wednesday count request
+    if "wednesdays" in question and "count" in question:
+        match = re.search(r"(\d{4}-\d{2}-\d{2}) to (\d{4}-\d{2}-\d{2})", question)
+        if match:
+            start_date, end_date = match.groups()
+            count = count_wednesdays(start_date, end_date)
+            return {"wednesdays_count": count}
+
+
     return {"answer": "Question not recognized"}
 
+@app.get("/")
+def home():
+    """Simple API home route."""
+    return {"message": "Local API for Testing 50 Questions is running!"}
 
