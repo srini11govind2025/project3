@@ -138,6 +138,18 @@ def answer_question(request: QuestionRequest):
     closest_question = find_closest_question(question)
     if closest_question:
         return {"answer": PREDEFINED_ANSWERS[closest_question]}
+    
+        # Q9 Sort JSON array by age, then by name
+    json_match = re.search(r"\[(\{.*?\})\]", question)
+    if json_match:
+        try:
+            json_data = json.loads("[" + json_match.group(1) + "]")
+            sorted_data = sorted(json_data, key=lambda x: (x["age"], x["name"]))
+            sorted_json = json.dumps(sorted_data, separators=(",", ":"))  # Minified JSON
+            return {"answer": sorted_json}
+        except:
+            return {"answer": "Error processing JSON sorting."}
+
 
 
     return {"answer": "Question not recognized"}
