@@ -16,11 +16,11 @@ s3 = boto3.client('s3')
 
 class HTMLInput(BaseModel):
     html: str  # Expecting raw HTML as input
-
+"""
 @app.post("/extract_hidden")
 async def extract_hidden_fields(data: HTMLInput):
     try:
-        soup = BeautifulSoup(data.html, "lxml")
+        soup = BeautifulSoup(data.html, "html.parser")  # Use "html.parser" instead of "lxml"
         hidden_inputs = soup.find_all("input", {"type": "hidden"})
 
         extracted_values = {inp.get("name", f"unnamed_{i}"): inp.get("value", "") 
@@ -30,7 +30,7 @@ async def extract_hidden_fields(data: HTMLInput):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+"""
 
 # GA1: Q3 - Precomputed hash values
 HASH_VALUES = {
