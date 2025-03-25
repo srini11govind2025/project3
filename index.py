@@ -8,11 +8,15 @@ import datetime
 from typing import Optional
 import boto3
 from bs4 import BeautifulSoup
+import os
+import json
+import re
+
 
 app = FastAPI()
 
 # AWS S3 Client Setup
-s3 = boto3.client('s3')
+#s3 = boto3.client('s3')
 
 #class HTMLInput(BaseModel):
     #html: str  # Expecting raw HTML as input
@@ -62,9 +66,6 @@ class QueryRequest(BaseModel):
 
 
 # API Endpoints
-@app.post("/answer")
-async def answer_query(request: QueryRequest):
-    question = request.question.lower().strip()
 
 def load_questions():
     """Loads predefined questions from a JSON file."""
@@ -85,11 +86,14 @@ def run_vscode_command(command: str = "-s"):
 
 # GA1: Q2 - Function to send HTTP request and return JSON response
 def send_http_request(email):
-    """Sends a GET request to httpbin.org with the provided email parameter."""
-    url = "https://httpbin.org/get"
-    params = {"email": email}
-    response = requests.get(url, params=params)
-    return response.json()
+    try:
+        url = "https://httpbin.org/get"
+        params = {"email": email}
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()  # Raises error for HTTP failures
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
 
 
 
