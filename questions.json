@@ -1,0 +1,45 @@
+[
+    
+    
+
+    {
+        "question": "What is the SHA-256 sum of npx -y prettier --write readme.md?",
+        "answer": "d7e7ede8b63ec87edde41981dc0a6a2f0f20f76b8c3af5f2c3be499b34598df9"
+    },
+    {
+        "question": "What is the MD5 sum of npx -y prettier --write readme.md?",
+        "answer": "3e007f57216fbbb6e86bfcd61c459795"
+    },
+    {
+        "question": "What is the SHA-1 sum of npx -y prettier --write readme.md?",
+        "answer": "22de3dd0e96651f0c76ab92d91330d1df9eef32d"
+    },
+    {
+        "question": "What is the SHA-224 sum of npx -y prettier --write readme.md?",
+        "answer": "defd2ef2a145f8c4ae2cefabb3281a8ad595c657fab5a92fc4a2df32"
+    },
+    {
+        "question": "What is the SHA-384 sum of npx -y prettier --write readme.md?",
+        "answer": "7c51d38e6ab86afe6d4264800f7c5a1df19c5c423c7ef568a6daac8f0480bc2b929aac5e33a8b7161e76a325d7a01124"
+    },
+    {
+        "question": "What is the SHA-512 sum of npx -y prettier --write readme.md?",
+        "answer": "d491f6814c22c186f467676bf4d414f18c17a880cd3d5d45a322a68bf54f363a9942f196a24f8caec9be17dbdff536c1ccd6a8111477abab0bdf92174bef1425"
+    },
+    {
+        "question": "What is the BLAKE2B sum of npx -y prettier --write readme.md?",
+        "answer": "command not found"
+    },
+    {
+        "question": "What is the BLAKE2S sum of npx -y prettier --write readme.md?",
+        "answer": "command not found"
+    },
+    {
+        "question": "What is the result of =SUM(ARRAY_CONSTRAIN(SEQUENCE(100, 100, 4, 13), 1, 10)) in Google Sheets?",
+        "answer": "625"
+    },
+    {
+        "question":     "Type this formula into Excel.=SUM(TAKE(SORTBY({0,7,3,0,15,3,0,3,0,3,13,7,5,4,8,3}, {10,9,13,2,11,8,16,14,7,15,5,4,6,1,3,12}), 1, 14))What is the result?",
+        "answer" : "71"
+    }
+]
