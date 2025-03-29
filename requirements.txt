@@ -3,3 +3,19 @@ uvicorn==0.16.0
 
 
 requests==2.25.1
+
+pydantic
+
+numpy
+pandas
+
+beautifulsoup4
+python-multipart
+hashlib
+datetime
+json
+re
+csv
+os
+subprocess
+difflib
