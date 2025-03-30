@@ -6,8 +6,5 @@ numpy
 pandas
 beautifulsoup4
 python-multipart
-re
-os
-difflib
 scipy
 matplotlib
