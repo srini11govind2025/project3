@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile , Form
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 import json
@@ -264,11 +264,11 @@ class QuestionRequest(BaseModel):
     question: str
 
 @app.post("/answer")
-def answer_question(request: QuestionRequest):
+async def answer_question(question: str = Form(...), file: UploadFile = File(None)):
     """Handles natural language questions and returns appropriate answers."""
     
-    question = request.question.lower().strip()
-    
+    question = question.lower().strip()
+  
     # Check predefined questions in JSON
     questions = load_questions()
     for q in questions:
